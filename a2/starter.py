@@ -52,34 +52,28 @@ def reshape_target_tensor(tensor):
     return new_tensor
     
 def relu(x):
-    # TODO
     #alternate method x*(x>0)
     return np.maximum(x,0)
     
 
 def softmax(x):
-    # TODO
     a = np.exp(x-np.max(x))
     return a/a.sum()
 
 
 
 def computeLayer(X, W, b):
-    # TODO
     return np.matmul(X,W) + b
 
 def CE(target, prediction):
     interim = target * np.log(prediction)
     interim2 = np.sum(interim, axis=1)
-    interim3 = np.sum(interim, axis=0)
+    interim3 = np.sum(interim2, axis=0)
     return (-1/target.shape[0])*interim3
-    # TODO
 
 
 def gradCE(target, prediction):
-
-    # TODO\
-    return prediction - target
+    return softmax(prediction) - target
 
 trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
 trainData = reshape_data_tensor(trainData)
