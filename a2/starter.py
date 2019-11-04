@@ -42,29 +42,51 @@ def shuffle(trainData, trainTarget):
     data, target = trainData[randIndx], target[randIndx]
     return data, target
 
+def reshape_data_tensor(tensor):
+    arg1,arg2,arg3 = tensor.shape
+    new_tensor = tensor.reshape((arg1, (arg2*arg3)))
+    return new_tensor
 
+def reshape_target_tensor(tensor):
+    new_tensor = tensor.reshape(tensor.shape[0], 1)
+    return new_tensor
+    
 def relu(x):
-    return np.max(x,0)
+    # TODO
+    #alternate method x*(x>0)
+    return np.maximum(x,0)
     
 
 def softmax(x):
-    exps = np.exp(x - np.max(x))
-    return exps/np.sum(exps)
+    # TODO
+    a = np.exp(x-np.max(x))
+    return a/a.sum()
+
+
 
 def computeLayer(X, W, b):
-    return np.matmul(W,X) + b
-
+    # TODO
+    return np.matmul(X,W) + b
 
 def CE(target, prediction):
-    product = target * np.log(prediction)
-    sumk = np.sum(product, axis=1)
-    sumN = np.sum(sumk, axis=0)
-    return (-1) * np.mean(sumN)
+    interim = target * np.log(prediction)
+    interim2 = np.sum(interim, axis=1)
+    interim3 = np.sum(interim, axis=0)
+    return (-1/target.shape[0])*interim3
+    # TODO
 
 
 def gradCE(target, prediction):
+
+    # TODO\
     return prediction - target
-    
-    
-    
-    
+
+trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
+trainData = reshape_data_tensor(trainData)
+validData = reshape_data_tensor(validData)
+testData = reshape_data_tensor(testData)
+trainTarget = reshape_target_tensor(trainTarget)
+validTarget= reshape_target_tensor(validTarget)
+testTarget = reshape_target_tensor(testTarget)
+newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
+
