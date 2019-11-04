@@ -84,3 +84,26 @@ validTarget= reshape_target_tensor(validTarget)
 testTarget = reshape_target_tensor(testTarget)
 newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
 
+#1.2 Functions
+
+def gradLossOuterWeight(target,prediction,h):
+    grad = gradCE(target,prediction)
+    return np.matmul(np.transpose(h), grad)
+    
+def gradLossOuterBias(target,prediction):
+    return gradCE(target,prediction)
+
+def gradLossHiddenWeights(target,prediction,X,W):
+    grad = gradCE(target,prediction)
+    interim = np.matmul(np.transpose(X),grad)
+    return np.matmul(interim, np.transpose(W))
+
+def gradLossHiddenBiases(target,prediction,W):
+    grad = gradCE(target,prediction)
+    return np.matmul(grad, np.transpose(W))
+    
+    
+    
+    
+    
+
