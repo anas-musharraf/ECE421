@@ -77,6 +77,7 @@ def gradCE(target, prediction):
 
 trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
 trainData = reshape_data_tensor(trainData)
+print(trainData.shape)
 validData = reshape_data_tensor(validData)
 testData = reshape_data_tensor(testData)
 trainTarget = reshape_target_tensor(trainTarget)
@@ -102,7 +103,14 @@ def gradLossHiddenBiases(target,prediction,W):
     grad = gradCE(target,prediction)
     return np.matmul(grad, np.transpose(W))
     
-    
+#CONSTANTS
+cLearningRate = 10^-5
+cGamma = 0.99
+cEpochs = 200
+cK = 1000
+
+W = np.random.rand(trainData.shape[1],cK) * np.sqrt(1/1000-1)
+print(W[0][0])
     
     
     
