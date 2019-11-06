@@ -71,8 +71,10 @@ def softmax(x):
     return a/a.sum()
 
 def softmax2(x):
-    exp_x = np.exp(x)
-    return exp_x/np.sum(exp_x,axis=1, keepdims=tr)
+    #pdb.set_trace()
+    max_of_row = np.amax(x,axis=1).reshape(x.shape[0],1)
+    a = np.exp(x-max_of_row)
+    return a/np.sum(a,axis=1, keepdims=True)
 
 
 
@@ -127,7 +129,7 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         a_hidden = relu(z_hidden)
         
         z_output = computeLayer(a_hidden, W_o, b_o)
-        a_output = softmax(z_output)
+        a_output = softmax2(z_output)
         pdb.set_trace()
         v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, a_output, a_hidden)
         b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, a_output)
