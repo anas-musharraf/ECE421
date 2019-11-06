@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov  5 21:52:05 2019
+
+@author: anirudhsampath
+"""
+
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
@@ -54,12 +62,17 @@ def reshape_target_tensor(tensor):
     
 def relu(x):
     #alternate method x*(x>0)
+    print(x[0][0])
     return np.maximum(x,0)
     
 
 def softmax(x):
     a = np.exp(x-np.max(x))
     return a/a.sum()
+
+def softmax2(x):
+    exp_x = np.exp(x)
+    return exp_x/np.sum(exp_x,axis=1, keepdims=tr)
 
 
 
@@ -115,7 +128,7 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         
         z_output = computeLayer(a_hidden, W_o, b_o)
         a_output = softmax(z_output)
-        
+        pdb.set_trace()
         v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, a_output, a_hidden)
         b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, a_output)
         W_o = W_o - v_o_init
@@ -124,6 +137,7 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         b_h_init = gamma*b_h_init + learningRate*gradLossHiddenBiases(trainTarget, a_output, W_o)
         W_h = W_h - v_h_init
         b_h_init = b_h - b_h_init
+        print(CE(trainTarget, a_output))
 
     return W_o, b_o, W_h, b_h
         
@@ -147,12 +161,13 @@ def test_function():
     testTarget2 = reshape_target_tensor(testTarget)
     newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
     
+    #print(trainData.shape[1], ck, trainData.shape[0])
     W_h_init = init_weight_vector(trainData.shape[1], cK)
-    v_h_init = np.full((trainData.shape[1], cK), 1E-7)
-    b_h_init = np.zeros((1,cK))
+    v_h_init = np.full((trainData.shape[1], cK), 1E-5)
+    b_h_init = np.full((1,cK), 1E-5)
     W_o_init = init_weight_vector(cK,10)
-    v_o_init = np.full((cK, 10), 1E-7)
-    b_o_init = np.zeros((1,10))
+    v_o_init = np.full((cK, 10), 1E-5)
+    b_o_init = np.full((1,10), 1E-5)
     
     #print(W_o_init)
     #print(W_h_init)
