@@ -107,7 +107,12 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, cK, trai
     loss_train = []
 
     for i in range(epochs):
-        h_input = np.matmul()
+        z_hidden = computeLayer(trainData,W_h, b_h)
+        a_hidden = relu(z_hidden)
+        
+        z_output = computeLayer(a_hidden, W_o, b_o)
+        a_output = softmax(z_output)
+        
     
     
 def test_function():
