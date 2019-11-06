@@ -107,6 +107,7 @@ vwh = np.full((784, hidden_nodes), 1e-5)
 vbh = np.full((1, hidden_nodes), 1e-5)
 vwo = np.full((hidden_nodes, 10), 1e-5)
 vbo = np.full((1, 10), 1e-5)
+accuracy_train = []
 
 for epoch in range(epochs):
 ############# feedforward
@@ -123,7 +124,7 @@ for epoch in range(epochs):
 
 ########## Phase 1
 
-    dcost_dzo = (softmax(ao) - trainTarget)/1
+    dcost_dzo = (softmax(ao) - trainTarget)/instances
     dcost_wo = np.matmul(ah.T, dcost_dzo)
     dcost_bo = dcost_dzo.sum(axis=0).reshape(1,-1)
 
@@ -150,6 +151,14 @@ for epoch in range(epochs):
     bo -= vbo
     #pdb.set_trace()
     #loss = np.sum((-trainTarget * np.log(ao)))/instances
+    
+    predict_result_matrix = np.argmax(ao, axis = 1)
+    actual_result_matrix = np.argmax(trainTarget, axis=1)
+    compare = np.equal(predict_result_matrix, actual_result_matrix)
+    acc = (np.sum((compare==True))/(instances))
+    accuracy_train.append(np.sum((compare==True))/(instances))
     loss = CE(trainTarget, ao)
+    print("Epoch", epoch)
     print('Loss function value: ', loss)
+    print("Accuracy", acc)
     error_cost.append(loss)

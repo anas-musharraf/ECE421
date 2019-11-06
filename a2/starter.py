@@ -89,7 +89,8 @@ def CE(target, prediction):
 
 
 def gradCE(target, prediction):
-    return (1/(target.shape[0]))*(softmax2(prediction) - target)
+    #return (1/(target.shape[0]))*(softmax2(prediction) - target)
+    return softmax2(prediction)-target
 
 
 #1.2 Functions
@@ -130,8 +131,8 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
     b_o_init = b_o
     v_h_init = v_h
     b_h_init = b_h
-    #accuracy_train = []
-    #loss_train = []
+    accuracy_train = []
+    loss_train = []
 
     for i in range(epochs):
         #print(i)
@@ -162,10 +163,18 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         #pdb.set_trace()
         #pdb.set_trace()
        # print(CE(trainTarget, a_output))
+        predict_result_matrix = np.argmax(a_output, axis = 1)
+        actual_result_matrix = np.argmax(trainTarget, axis=1)
+        compare = np.equal(predict_result_matrix, actual_result_matrix)
+        acc = (np.sum((compare==True))/(trainData.shape[0]))
+        accuracy_train.append(np.sum((compare==True))/(trainData.shape[0]))
+        loss_train.append(CE(trainTarget, a_output))
+        
         print('Epoch Number:', i)
         print('Loss function value: ', CE(trainTarget, a_output))
+        print("Accuracy", acc)
 
-    return W_o, b_o, W_h, b_h
+    return W_o, b_o, W_h, b_h, accuracy_train, loss_train
         
         
     
@@ -173,8 +182,8 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
 def test_function():
     #CONSTANTS
     cLearningRate = 1E-5
-    cGamma = 0.99
-    cEpochs = 200
+    cGamma = 0.9
+    cEpochs = 50
     cK = 1000
     
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
@@ -198,8 +207,18 @@ def test_function():
     #print(W_o_init)
     #print(W_h_init)
 
-    W_o, b_o, W_h, b_h = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
-    
+    W_o, b_o, W_h, b_h, acc_train, loss_train = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
+    iterations = range(cEpochs)
+    plt.plot(iterations, loss_train, label = 'Training Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
+    plt.plot(iterations, acc_train, label = 'Training Acc')
+    plt.ylabel('Acc')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
     return 0
 if __name__ == '__main__':
     test_function()
