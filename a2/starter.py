@@ -108,7 +108,8 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
     #loss_train = []
 
     for i in range(epochs):
-        pdb.set_trace()
+        print(i)
+        #pdb.set_trace()
         z_hidden = computeLayer(trainData,W_h, b_h)
         a_hidden = relu(z_hidden)
         
@@ -138,7 +139,7 @@ def test_function():
     
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
     trainData = reshape_data_tensor(trainData)
-    print(trainData.shape)
+    #print(trainData.shape)
     validData = reshape_data_tensor(validData)
     testData = reshape_data_tensor(testData)
     trainTarget2 = reshape_target_tensor(trainTarget)
@@ -146,15 +147,15 @@ def test_function():
     testTarget2 = reshape_target_tensor(testTarget)
     newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
     
-    W_h_init = init_weight_vector(trainData.shape[0], cK)
-    v_h_init = np.full((trainData.shape[0], cK), 1E-7)
-    b_h_init = np.zeros((1, cK))
+    W_h_init = init_weight_vector(trainData.shape[1], cK)
+    v_h_init = np.full((trainData.shape[1], cK), 1E-7)
+    b_h_init = np.zeros((1,cK))
     W_o_init = init_weight_vector(cK,10)
     v_o_init = np.full((cK, 10), 1E-7)
-    b_o_init = np.zeros((1, 10))
+    b_o_init = np.zeros((1,10))
     
-    print(W_o_init)
-    print(W_h_init)
+    #print(W_o_init)
+    #print(W_h_init)
     
     W_o, b_o, W_h, b_h = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
     
