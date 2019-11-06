@@ -75,15 +75,6 @@ def CE(target, prediction):
 def gradCE(target, prediction):
     return softmax(prediction) - target
 
-trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
-trainData = reshape_data_tensor(trainData)
-print(trainData.shape)
-validData = reshape_data_tensor(validData)
-testData = reshape_data_tensor(testData)
-trainTarget = reshape_target_tensor(trainTarget)
-validTarget= reshape_target_tensor(validTarget)
-testTarget = reshape_target_tensor(testTarget)
-newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
 
 #1.2 Functions
 
@@ -103,14 +94,52 @@ def gradLossHiddenBiases(target,prediction,W):
     grad = gradCE(target,prediction)
     return np.matmul(grad, np.transpose(W))
     
-#CONSTANTS
-cLearningRate = 10^-5
-cGamma = 0.99
-cEpochs = 200
-cK = 1000
+def init_weight_vector(units_in, units_out):
+    vector = np.random.normal(0, np.sqrt(2/units_in+units_out), (units_in, units_out))
+    return vector
+    
+def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, cK, trainData, trainTarget):
+    v_o_init = v_o
+    b_o_init = b_o
+    v_h_init = v_h
+    b_h_init = b_h
+    accuracy_train = []
+    loss_train = []
 
-W = np.random.rand(trainData.shape[1],cK) * np.sqrt(1/1000-1)
-print(W[0][0])
+    for i in range(epochs):
+        h_input = np.matmul()
+    
+    
+def test_function():
+    #CONSTANTS
+    cLearningRate = 10^-5
+    cGamma = 0.99
+    cEpochs = 200
+    cK = 1000
+    
+    trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
+    trainData = reshape_data_tensor(trainData)
+    print(trainData.shape)
+    validData = reshape_data_tensor(validData)
+    testData = reshape_data_tensor(testData)
+    trainTarget2 = reshape_target_tensor(trainTarget)
+    validTarget2 = reshape_target_tensor(validTarget)
+    testTarget2 = reshape_target_tensor(testTarget)
+    newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
+    
+    W_h_init = init_weight_vector(trainData.shape[0], cK)
+    v_h_init = np.full((trainData.shape[0], cK), 1E-7)
+    b_h_init = np.zeros(1, cK)
+    W_o_init = init_weight_vector(cK,10)
+    v_o_init = np.full((cK, 10), 1E-7)
+    b_o_init = np.zeros(1, 10)
+    
+    print(W_o_init)
+    print(W_h_init)
+    
+    return 0
+
+test_function()
     
     
     
