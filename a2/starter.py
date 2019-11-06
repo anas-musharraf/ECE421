@@ -62,7 +62,7 @@ def reshape_target_tensor(tensor):
     
 def relu(x):
     #alternate method x*(x>0)
-    print(x[0][0])
+    #print(x[0][0])
     return np.maximum(x,0)
     
 
@@ -89,7 +89,7 @@ def CE(target, prediction):
 
 
 def gradCE(target, prediction):
-    return softmax(prediction) - target
+    return (1/(target.shape[0]))*(softmax2(prediction) - target)
 
 
 #1.2 Functions
@@ -99,19 +99,30 @@ def gradLossOuterWeight(target,prediction,h):
     return np.matmul(np.transpose(h), grad)
     
 def gradLossOuterBias(target,prediction):
-    return gradCE(target,prediction)
+    return np.sum(gradCE(target,prediction), axis=0).reshape(1,-1)
 
-def gradLossHiddenWeights(target,prediction,X,W):
+def gradLossHiddenWeights(target,prediction,X,W, z_hidden):
+    backwardRelu(z_hidden)
     grad = gradCE(target,prediction)
-    interim = np.matmul(np.transpose(X),grad)
-    return np.matmul(interim, np.transpose(W))
-
+    #print(grad.shape)
+    #interim = np.matmul(np.transpose(X),grad)
+    #abc = np.matmul(interim, np.transpose(W))
+    interim = np.multiply(np.matmul(grad, np.transpose(W)),z_hidden)
+    b = np.matmul(np.transpose(X), interim)
+    #pdb.set_trace()
+    return b
+    
 def gradLossHiddenBiases(target,prediction,W):
     grad = gradCE(target,prediction)
-    return np.matmul(grad, np.transpose(W))
+    return np.sum(np.matmul(grad, np.transpose(W)), axis=0).reshape(1,-1)
+    
+def backwardRelu(X):
+    X[X<=0] = 0
+    X[X>0] = 1
+    return X
     
 def init_weight_vector(units_in, units_out):
-    vector = np.random.normal(0, np.sqrt(2/units_in+units_out), (units_in, units_out))
+    vector = np.random.normal(0, np.sqrt(2/(units_in+units_out)), (units_in, units_out))
     return vector
     
 def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainData, trainTarget):
@@ -123,23 +134,36 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
     #loss_train = []
 
     for i in range(epochs):
-        print(i)
+        #print(i)
         #pdb.set_trace()
         z_hidden = computeLayer(trainData,W_h, b_h)
+        z_h_copy = z_hidden
         a_hidden = relu(z_hidden)
         
         z_output = computeLayer(a_hidden, W_o, b_o)
         a_output = softmax2(z_output)
-        pdb.set_trace()
-        v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, a_output, a_hidden)
-        b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, a_output)
+        
+        #print(z_hidden[0])
+        #print(a_hidden[0])
+        #print(z_output[0])
+        #print(a_output[0])
+       # pdb.set_trace()
+        #pdb.set_trace()
+        v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, z_output, a_hidden)
+        b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, z_output)
+
+        v_h_init = gamma*v_h_init + learningRate*gradLossHiddenWeights(trainTarget, z_output, trainData, W_o, z_h_copy)
+        b_h_init = gamma*b_h_init + learningRate*gradLossHiddenBiases(trainTarget, z_output, W_o)
+        
         W_o = W_o - v_o_init
         b_o = b_o - b_o_init
-        v_h_init = gamma*v_h_init + learningRate*gradLossHiddenWeights(trainTarget, a_output, trainData, W_o)
-        b_h_init = gamma*b_h_init + learningRate*gradLossHiddenBiases(trainTarget, a_output, W_o)
         W_h = W_h - v_h_init
         b_h_init = b_h - b_h_init
-        print(CE(trainTarget, a_output))
+        #pdb.set_trace()
+        #pdb.set_trace()
+       # print(CE(trainTarget, a_output))
+        print('Epoch Number:', i)
+        print('Loss function value: ', CE(trainTarget, a_output))
 
     return W_o, b_o, W_h, b_h
         
@@ -148,7 +172,7 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
     
 def test_function():
     #CONSTANTS
-    cLearningRate = 10^-5
+    cLearningRate = 1E-5
     cGamma = 0.99
     cEpochs = 200
     cK = 1000
@@ -173,7 +197,7 @@ def test_function():
     
     #print(W_o_init)
     #print(W_h_init)
-    
+
     W_o, b_o, W_h, b_h = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
     
     return 0
