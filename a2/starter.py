@@ -126,13 +126,17 @@ def init_weight_vector(units_in, units_out):
     vector = np.random.normal(0, np.sqrt(2/(units_in+units_out)), (units_in, units_out))
     return vector
     
-def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainData, trainTarget):
+def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainData, trainTarget, validData, validTarget, testData, testTarget):
     v_o_init = v_o
     b_o_init = b_o
     v_h_init = v_h
     b_h_init = b_h
-    accuracy_train = []
+    acc_train = []
     loss_train = []
+    acc_valid = []
+    loss_valid = []
+    acc_test = []
+    loss_test = []
 
     for i in range(epochs):
         #print(i)
@@ -144,12 +148,16 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         z_output = computeLayer(a_hidden, W_o, b_o)
         a_output = softmax2(z_output)
         
-        #print(z_hidden[0])
-        #print(a_hidden[0])
-        #print(z_output[0])
-        #print(a_output[0])
-       # pdb.set_trace()
-        #pdb.set_trace()
+        z_h_valid = computeLayer(validData,W_h, b_h)
+        a_h_valid = relu(z_h_valid)
+        z_out_valid = computeLayer(a_h_valid, W_o, b_o)
+        a_out_valid = softmax2(z_out_valid)
+        
+        z_h_test = computeLayer(testData,W_h, b_h)
+        a_h_test = relu(z_h_test)
+        z_out_test = computeLayer(a_h_test, W_o, b_o)
+        a_out_test = softmax2(z_out_test)
+        
         v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, z_output, a_hidden)
         b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, z_output)
 
@@ -167,14 +175,30 @@ def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainDat
         actual_result_matrix = np.argmax(trainTarget, axis=1)
         compare = np.equal(predict_result_matrix, actual_result_matrix)
         acc = (np.sum((compare==True))/(trainData.shape[0]))
-        accuracy_train.append(np.sum((compare==True))/(trainData.shape[0]))
+        acc_train.append(np.sum((compare==True))/(trainData.shape[0]))
         loss_train.append(CE(trainTarget, a_output))
         
+        pred_valid = np.argmax(a_out_valid, axis = 1)
+        act_valid = np.argmax(validTarget, axis=1)
+        compare_valid = np.equal(pred_valid, act_valid)
+        acc_v = (np.sum((compare_valid==True))/(validData.shape[0]))
+        acc_valid.append((np.sum((compare_valid==True))/(validData.shape[0])))
+        loss_valid.append(CE(validTarget, a_out_valid))
+        
+        pred_test = np.argmax(a_out_test, axis = 1)
+        act_test = np.argmax(testTarget, axis=1)
+        compare_test = np.equal(pred_test, act_test)
+        acc_t = (np.sum((compare_test==True))/(testData.shape[0]))
+        acc_test.append((np.sum((compare_test==True))/(testData.shape[0])))
+        loss_test.append(CE(testTarget, a_out_test))
+        
         print('Epoch Number:', i)
-        print('Loss function value: ', CE(trainTarget, a_output))
-        print("Accuracy", acc)
-
-    return W_o, b_o, W_h, b_h, accuracy_train, loss_train
+        print('Training Loss function value: ', CE(trainTarget, a_output))
+        print("Training Accuracy", acc)
+        print("Validation Accuracy", acc_v)
+        print("Test Accuracy", acc_t)
+        
+    return W_o, b_o, W_h, b_h, acc_train, loss_train, acc_valid, loss_valid, acc_test, loss_test
         
         
     
@@ -183,8 +207,8 @@ def test_function():
     #CONSTANTS
     cLearningRate = 1E-5
     cGamma = 0.9
-    cEpochs = 50
-    cK = 1000
+    cEpochs = 200
+    cK = 500
     
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
     trainData = reshape_data_tensor(trainData)
@@ -207,14 +231,40 @@ def test_function():
     #print(W_o_init)
     #print(W_h_init)
 
-    W_o, b_o, W_h, b_h, acc_train, loss_train = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
+    W_o, b_o, W_h, b_h, acc_train, loss_train, acc_valid, loss_valid, acc_test, loss_test = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain, validData, newValid, testData, newTest )
     iterations = range(cEpochs)
+    #pdb.set_trace()
     plt.plot(iterations, loss_train, label = 'Training Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
     plt.show()
+    
     plt.plot(iterations, acc_train, label = 'Training Acc')
+    plt.ylabel('Acc')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
+    
+    plt.plot(iterations, loss_valid, label = 'Valid Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
+    
+    plt.plot(iterations, acc_valid, label = 'Valid Acc')
+    plt.ylabel('Acc')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
+    
+    plt.plot(iterations, loss_test, label = 'Test Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(loc='best')
+    plt.show()
+    
+    plt.plot(iterations, acc_test, label = 'Test Acc')
     plt.ylabel('Acc')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
