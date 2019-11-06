@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import os
+import pdb
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 # Load the data
@@ -98,20 +99,33 @@ def init_weight_vector(units_in, units_out):
     vector = np.random.normal(0, np.sqrt(2/units_in+units_out), (units_in, units_out))
     return vector
     
-def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, cK, trainData, trainTarget):
+def learning(W_o, v_o, b_o, W_h, v_h, b_h, epochs, gamma, learningRate, trainData, trainTarget):
     v_o_init = v_o
     b_o_init = b_o
     v_h_init = v_h
     b_h_init = b_h
-    accuracy_train = []
-    loss_train = []
+    #accuracy_train = []
+    #loss_train = []
 
     for i in range(epochs):
+        pdb.set_trace()
         z_hidden = computeLayer(trainData,W_h, b_h)
         a_hidden = relu(z_hidden)
         
         z_output = computeLayer(a_hidden, W_o, b_o)
         a_output = softmax(z_output)
+        
+        v_o_init = gamma*v_o_init + learningRate*gradLossOuterWeight(trainTarget, a_output, a_hidden)
+        b_o_init = gamma*b_o_init + learningRate*gradLossOuterBias(trainTarget, a_output)
+        W_o = W_o - v_o_init
+        b_o = b_o - b_o_init
+        v_h_init = gamma*v_h_init + learningRate*gradLossHiddenWeights(trainTarget, a_output, trainData, W_o)
+        b_h_init = gamma*b_h_init + learningRate*gradLossHiddenBiases(trainTarget, a_output, W_o)
+        W_h = W_h - v_h_init
+        b_h_init = b_h - b_h_init
+
+    return W_o, b_o, W_h, b_h
+        
         
     
     
@@ -134,17 +148,20 @@ def test_function():
     
     W_h_init = init_weight_vector(trainData.shape[0], cK)
     v_h_init = np.full((trainData.shape[0], cK), 1E-7)
-    b_h_init = np.zeros(1, cK)
+    b_h_init = np.zeros((1, cK))
     W_o_init = init_weight_vector(cK,10)
     v_o_init = np.full((cK, 10), 1E-7)
-    b_o_init = np.zeros(1, 10)
+    b_o_init = np.zeros((1, 10))
     
     print(W_o_init)
     print(W_h_init)
     
+    W_o, b_o, W_h, b_h = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain )
+    
     return 0
+if __name__ == '__main__':
+    test_function()
 
-test_function()
     
     
     
