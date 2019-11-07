@@ -286,8 +286,37 @@ def test_function():
     plt.show()
     
     return 0
+
+def conv_neural_network():
+    trainData, validData, testData, trainTarget, validTarget, testTarget = loadData() #data already comes out normalized
+    newTrain, newValid, newTest = convertOneHot(trainTarget, validTarget, testTarget)
+    
+    trainData = trainData.reshape(trainData.shape[0], 28, 28, 1)
+    validData = validData.reshape(validData.shape[0], 28, 28, 1)
+    testData = testData.reshape(testData.shape[0],28, 28, 1)
+    model = tf.keras.models.Sequential()
+    model.add(tf.keras.layers.Conv2D(32, kernel_size=3, activation=tf.nn.relu, strides=(1,1), input_shape=(28,28,1)))
+    model.add(tf.keras.layers.BatchNormalization())
+    model.add(tf.keras.layers.MaxPooling2D(pool_size = (2, 2)))
+    model.add(tf.keras.layers.Flatten()) 
+    model.add(tf.keras.layers.Dense(784, activation=tf.nn.relu))
+    model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
+    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
+    model.fit(trainData, newTrain, batch_size=32, epochs=50)
+    
+    test_loss, test_acc = model.evaluate(testData, newTest)
+    val_loss, val_acc = model.evaluate(validData, newValid)
+    train_loss, train_acc = model.evaluate(trainData, newTrain)
+    print(train_loss, train_acc)
+    print(val_loss, val_acc)
+    print(test_loss, test_acc)
+    
+    return 0
+        
+    
 if __name__ == '__main__':
-    test_function()
+    #test_function()
+    conv_neural_network()
 
     
     
