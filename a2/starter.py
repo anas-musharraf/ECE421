@@ -208,7 +208,7 @@ def test_function():
     cLearningRate = 1E-5
     cGamma = 0.9
     cEpochs = 200
-    cK = 500
+    cK = 2000
     
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
     trainData = reshape_data_tensor(trainData)
@@ -233,42 +233,58 @@ def test_function():
 
     W_o, b_o, W_h, b_h, acc_train, loss_train, acc_valid, loss_valid, acc_test, loss_test = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain, validData, newValid, testData, newTest )
     iterations = range(cEpochs)
+    
+    np.savetxt("part1_train_loss_g9_200_2000.txt", loss_train, fmt='%f')
+    np.savetxt("part1_valid_loss_g9_200_2000.txt", loss_valid, fmt='%f')
+    np.savetxt("part1_test_loss_g9_200_2000.txt", loss_test, fmt='%f')
+    
+    np.savetxt("part1_train_acc_g9_200_2000.txt", acc_train, fmt='%f')
+    np.savetxt("part1_valid_acc_g9_200_2000.txt", acc_valid, fmt='%f')
+    np.savetxt("part1_test_acc_g9_200_2000.txt", acc_test, fmt='%f')
+    
     #pdb.set_trace()
     plt.plot(iterations, loss_train, label = 'Training Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('training_loss_vs_epoch_9_200_2000.png')
     plt.show()
     
     plt.plot(iterations, acc_train, label = 'Training Acc')
     plt.ylabel('Acc')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('training_acc_vs_epoch_9_200_2000.png')
     plt.show()
     
     plt.plot(iterations, loss_valid, label = 'Valid Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('valid_loss_vs_epoch_9_200_2000.png')
     plt.show()
     
     plt.plot(iterations, acc_valid, label = 'Valid Acc')
     plt.ylabel('Acc')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('valid_acc_vs_epoch_9_200_2000.png')
     plt.show()
     
     plt.plot(iterations, loss_test, label = 'Test Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('test_loss_vs_epoch_9_200_2000.png')
     plt.show()
     
     plt.plot(iterations, acc_test, label = 'Test Acc')
     plt.ylabel('Acc')
     plt.xlabel('Epoch')
     plt.legend(loc='best')
+    plt.savefig('test_acc_vs_epoch_9_200_2000.png')
     plt.show()
+    
     return 0
 if __name__ == '__main__':
     test_function()
