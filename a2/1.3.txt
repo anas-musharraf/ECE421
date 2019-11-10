@@ -1,0 +1,5 @@
+Epoch Number: 199
+Training Loss function value:  0.11056324520544789
+Training Accuracy 0.978
+Validation Accuracy 0.9128333333333334
+Test Accuracy 0.9100587371512482

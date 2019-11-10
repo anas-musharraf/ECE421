@@ -208,7 +208,7 @@ def test_function():
     cLearningRate = 1E-5
     cGamma = 0.9
     cEpochs = 200
-    cK = 2000
+    cK = 100
     
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData()
     trainData = reshape_data_tensor(trainData)
@@ -233,7 +233,29 @@ def test_function():
 
     W_o, b_o, W_h, b_h, acc_train, loss_train, acc_valid, loss_valid, acc_test, loss_test = learning(W_o_init, v_o_init, b_o_init, W_h_init, v_h_init, b_h_init, cEpochs, cGamma, cLearningRate, trainData, newTrain, validData, newValid, testData, newTest )
     iterations = range(cEpochs)
-    
+    '''
+    plt.plot(iterations, loss_train, label = 'Training Loss')
+    plt.plot(iterations, loss_valid, label = 'Validation Loss')
+    plt.plot(iterations, loss_test, label = 'Testing Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.title('Loss vs Epoch Using a hidden unit size of 100')
+    plt.legend(loc='best')
+    plt.savefig('1_4_loss_vs_epoch_hidden100.png')
+    plt.show()
+    '''
+    '''
+    plt.plot(iterations, acc_train, label = 'Training Accuracy')
+    plt.plot(iterations, acc_valid, label = 'Validation Accuracy')
+    plt.plot(iterations, acc_test, label = 'Testing Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.title('Accuracy vs Epoch Using a hidden unit size of 2000')
+    plt.legend(loc='best')
+    plt.savefig('1_4_accuracy_vs_epoch_hidden2000.png')
+    plt.show()
+    '''
+    '''
     np.savetxt("part1_train_loss_g9_200_2000.txt", loss_train, fmt='%f')
     np.savetxt("part1_valid_loss_g9_200_2000.txt", loss_valid, fmt='%f')
     np.savetxt("part1_test_loss_g9_200_2000.txt", loss_test, fmt='%f')
@@ -284,7 +306,7 @@ def test_function():
     plt.legend(loc='best')
     plt.savefig('test_acc_vs_epoch_9_200_2000.png')
     plt.show()
-    
+    '''
     return 0
 
 def conv_neural_network():
@@ -311,8 +333,30 @@ def conv_neural_network():
     print(val_loss, val_acc)
     print(test_loss, test_acc)
     
+    iterations = range(50)
+    
+    plt.plot(iterations, train_loss, label = 'Training Loss')
+    plt.plot(iterations, val_loss, label = 'Validation Loss')
+    plt.plot(iterations, test_loss, label = 'Testing Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.title('Loss vs Epoch Using SGD')
+    plt.legend(loc='best')
+    plt.savefig('2_2_loss_vs_epoch_SGD.png')
+    plt.show()
+
+    plt.plot(iterations, train_acc, label = 'Training Accuracy')
+    plt.plot(iterations, val_acc, label = 'Validation Accuracy')
+    plt.plot(iterations, test_acc, label = 'Testing Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.title('Accuracy vs Epoch Using SGD')
+    plt.legend(loc='best')
+    plt.savefig('2_2_accuracy_vs_epoch_SGD.png')
+    plt.show()
+    
     return 0
-        
+      
     
 if __name__ == '__main__':
     #test_function()
