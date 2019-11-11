@@ -316,7 +316,7 @@ def conv_neural_network():
     model.add(tf.keras.layers.MaxPooling2D(pool_size = (2, 2)))
     model.add(tf.keras.layers.Flatten()) 
     model.add(tf.keras.layers.Dense(784, activation=tf.nn.relu))
-    model.add(tf.keras.layers.Dropout(0.9))
+    model.add(tf.keras.layers.Dropout(0.75))
    # model.add(tf.keras.layers.Dense(784, activation=tf.nn.relu, kernel_regularizer=tf.keras.regularizers.l2(0.5)))
     model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
@@ -343,9 +343,9 @@ def conv_neural_network():
     plt.plot(iterations, test_loss, label = 'Testing Loss')
     plt.ylabel('Loss')
     plt.xlabel('Epoch')
-    plt.title('Loss vs Epoch Using SGD, Dropout p=0.9')
+    plt.title('Loss vs Epoch Using SGD, Dropout p=0.75')
     plt.legend(loc='best')
-    plt.savefig('2_3_2_loss_vs_epoch_SGD.png')
+    plt.savefig('2_3_2_075_loss_vs_epoch_SGD.png')
     plt.show()
 
     plt.plot(iterations, train_acc, label = 'Training Accuracy')
@@ -353,9 +353,9 @@ def conv_neural_network():
     plt.plot(iterations, test_acc, label = 'Testing Accuracy')
     plt.ylabel('Accuracy')
     plt.xlabel('Epoch')
-    plt.title('Accuracy vs Epoch Using SGD, Dropout p=0.9')
+    plt.title('Accuracy vs Epoch Using SGD, Dropout p=0.75')
     plt.legend(loc='best')
-    plt.savefig('2_3_2_accuracy_vs_epoch_SGD.png')
+    plt.savefig('2_3_2_075_accuracy_vs_epoch_SGD.png')
     plt.show()
     return 0
         
