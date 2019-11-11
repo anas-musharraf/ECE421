@@ -287,7 +287,21 @@ def test_function():
     plt.show()
     
     return 0
+    
+class TestCallback(tf.keras.callbacks.Callback):
+    def __init__(self, test_data):
+        self.test_data = test_data
 
+    def on_epoch_end(self, epoch, logs={}):
+        x, y = self.test_data
+        loss, acc = self.model.evaluate(x, y, verbose=0)
+        #`print('\nTesting loss: {}, acc: {}\n'.format(loss, acc))
+        if 'test_loss' not in self.model.history.history.keys():
+            self.model.history.history['test_loss'] = []
+            self.model.history.history['test_acc'] = []
+        self.model.history.history['test_loss'].append(loss)
+        self.model.history.history['test_acc'].append(acc)
+        
 
 def conv_neural_network():
     trainData, validData, testData, trainTarget, validTarget, testTarget = loadData() #data already comes out normalized
@@ -304,28 +318,20 @@ def conv_neural_network():
     model.add(tf.keras.layers.Dense(784, activation=tf.nn.relu))
     model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
     model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
-    model.fit(trainData, newTrain, batch_size=32, epochs=50, validation_data=(validData, newValid))
+    model.fit(trainData, newTrain, batch_size=32, epochs=50, validation_data=(validData, newValid), callbacks=[TestCallback((testData, newTest))], verbose=1)
     
-    model2 = tf.keras.models.Sequential()
-    model2.add(tf.keras.layers.Conv2D(32, kernel_size=3, activation=tf.nn.relu, strides=(1,1), input_shape=(28,28,1)))
-    model2.add(tf.keras.layers.BatchNormalization())
-    model2.add(tf.keras.layers.MaxPooling2D(pool_size = (2, 2)))
-    model2.add(tf.keras.layers.Flatten()) 
-    model2.add(tf.keras.layers.Dense(784, activation=tf.nn.relu))
-    model2.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
-    model2.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
-    model2.fit(trainData, newTrain, batch_size=32, epochs=50, validation_data=(testData, newTest))
-    
-    pdb.set_trace()
+    #pdb.set_trace()
     #test_loss, test_acc = model.evaluate(testData, newTest)
     #val_loss, val_acc = model.evaluate(validData, newValid)
     #train_loss, train_acc = model.evaluate(trainData, newTrain)
     train_loss = model.history.history['loss']
     train_acc = model.history.history['accuracy']
-    valid_loss = model.history.history['val_loss']
-    valid_acc = model.history.history['val_accuracy']
-    test_loss = model2.history.history['val_loss']
-    test_acc = model2.history.history['val_accuracy']
+    val_loss = model.history.history['val_loss']
+    val_acc = model.history.history['val_accuracy']
+    test_loss = model.history.history['test_loss']
+    test_acc = model.history.history['test_acc']
+
+
 
     iterations = range(50)
     
