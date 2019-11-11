@@ -323,7 +323,7 @@ def conv_neural_network():
     model.add(tf.keras.layers.Flatten()) 
     model.add(tf.keras.layers.Dense(784, activation=tf.nn.relu))
     model.add(tf.keras.layers.Dense(10, activation=tf.nn.softmax))
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer=tf.keras.optimizers.Adam(lr=0.0001), loss='categorical_crossentropy',metrics=['accuracy'])
     model.fit(trainData, newTrain, batch_size=32, epochs=50)
     
     test_loss, test_acc = model.evaluate(testData, newTest)
@@ -333,6 +333,7 @@ def conv_neural_network():
     print(val_loss, val_acc)
     print(test_loss, test_acc)
     
+    '''
     iterations = range(50)
     
     plt.plot(iterations, train_loss, label = 'Training Loss')
@@ -354,7 +355,7 @@ def conv_neural_network():
     plt.legend(loc='best')
     plt.savefig('2_2_accuracy_vs_epoch_SGD.png')
     plt.show()
-    
+    '''
     return 0
       
     
