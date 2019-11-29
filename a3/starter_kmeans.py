@@ -26,3 +26,10 @@ def distanceFunc(X, MU):
     # Outputs
     # pair_dist: is the squared pairwise distance matrix (NxK)
     # TODO
+    x_update = tf.expand_dims(X,1) #turn matrix into Nx1xD
+    mu_update = tf.expand_dims(MU,0) #turn matrix into 1xkxD
+    subtract = x_update - mu_update #subtract 1xD  and KxD matrices
+    squared_val = tf.square(subtract) #square the distance between each dimension of the vectors
+    return tf.reduce_sum(squared_val, 2) #summing over the D dimensions
+    
+    
