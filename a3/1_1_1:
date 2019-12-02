@@ -1,0 +1,36 @@
+1_1_1:
+
+K=1:
+purple = 100%
+
+K=2:
+purple = 50.19
+yellow = 49.81
+
+K=3:
+Yellow = 24.07%
+Purple = 39.78
+green = 38.41
+
+K=4:
+purple = 12.31
+yellow = 37.63
+greeb = 36.33
+blue = 13.72
+
+K=5:
+purple = 35.53
+yellow = 36.10
+greeb = 8.13
+blue = 8.20
+turqoise = 12.03
+
+
+Validation Loss:
+
+K=1: 12870.09961
+K=2: 2960.87769
+K=3: 1629.30969
+K=4: 1054.5375
+K=5: 889.03949
+

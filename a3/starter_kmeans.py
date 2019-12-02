@@ -49,7 +49,7 @@ def buildGraph(dim=2, k=3):
     
 #KList = [1, 2, 3, 4, 5]
 
-KList = [3]
+KList = [1,2,3,4,5]
 
 best_MUs = []
 KTrainLosses = []
@@ -73,7 +73,7 @@ for K in KList:
     with tf.compat.v1.Session() as sess:
         
         sess.run(init)
-        for epoch in range(200):
+        for epoch in range(500):
             
             sess.run([train], feed_dict={X: data})
             lossUpdate = sess.run([loss], feed_dict={X: data})
@@ -114,12 +114,12 @@ for K in KList:
     KTrainPercents.append(train_percentages)
     KValCounts.append(val_counts)
     KValPercents.append(val_percentages)
-    
+    '''
     plt.figure()
     plt.scatter(data[:,0], data[:,1], s=1, c=train_assignments)
     plt.scatter(best_MU[:,0], best_MU[:,1], marker='x', s=25, c='black')
     plt.title('K means clustering on data with K = {}'.format(K))
-    plt.savefig('1_1_1_scatter.png')
+    plt.savefig('1_1_2_scatter_with_K={}.png'.format(K))
     plt.show()
     
     plt.figure()
@@ -127,22 +127,22 @@ for K in KList:
     plt.scatter(best_MU[:,0], best_MU[:,1], marker='x', s=25, c='black')
     plt.title('K means clustering on validation data with K = {}'.format(K))
     plt.show()
-
+'''
     plt.figure()
     plt.plot(losses)
     plt.xlabel('Number of updates')
     plt.ylabel('Loss')
     plt.title('K means vs. number of updates for K = {}'.format(K))
-    plt.savefig('1_1_1_loss_vs_updates.png')
+    plt.savefig('1_1_1_loss_vs_epoch_with_K={}.png'.format(K))
     plt.show()
-    
+    '''
 plt.figure()
 plt.plot(KList, KValLosses)
 plt.xlabel('K')
 plt.ylabel('Validation loss')
 plt.title('K means validation loss vs. K')
 plt.show()
-
+'''
 
 '''
 ### 100d dataset
