@@ -17,7 +17,6 @@ np.random.shuffle(rnd_idx)
 val_data = data[rnd_idx[:valid_batch]]
 data = data[rnd_idx[valid_batch:]]
 
-
 # Distance function for K-means
 def distanceFunc(X, MU):
     # Inputs
@@ -25,31 +24,32 @@ def distanceFunc(X, MU):
     # MU: is an KxD matrix (K means and D dimensions)
     # Outputs
     # pair_dist: is the squared pairwise distance matrix (NxK)
-    # TODO
-    x_update = tf.expand_dims(X,1) #turn matrix into Nx1xD
-    mu_update = tf.expand_dims(MU,0) #turn matrix into 1xkxD
-    subtract = x_update - mu_update #subtract 1xD  and KxD matrices
-    squared_val = tf.square(subtract) #square the distance between each dimension of the vectors
-    return tf.reduce_sum(squared_val, 2) #summing over the D dimensions
+    X_expanded = tf.expand_dims(X, 0)
+    MU_expanded = tf.expand_dims(MU, 1)
+    pair_dist = tf.transpose(tf.reduce_sum(tf.square(tf.subtract(X_expanded, MU_expanded)), 2))
+    return pair_dist
 
-def buildGraph(dim=2, k=3):
+def buildGraph(K, D):
     
-    #Inputs
-    x = tf.compat.v1.placeholder(tf.float32, [None, dim])
-    mu = tf.Variable(tf.random.normal(shape=[k, dim]))
+    tf.compat.v1.set_random_seed(421)
+    MU = tf.Variable(tf.random.normal(shape=[K, D]))
+    X = tf.compat.v1.placeholder(tf.float32, [None, D])
     
-    distances = distanceFunc(x,mu)
+    distances = distanceFunc(X, MU)
+    assignments = tf.math.argmin(distances, axis=1)
     
     loss = tf.reduce_sum(tf.math.reduce_min(distances, axis=1))
-    prediction = tf.argmin(distances,1)
     
-    train = tf.compat.v1.train.AdamOptimizer(learning_rate=0.1, beta1=0.9, beta2=0.99,epsilon=1e-5).minimize(loss)
-
-    return x, mu, distances, loss, prediction, train
+    optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.1, beta1=0.9,
+                                             beta2=0.99, epsilon=1e-5)
     
-#KList = [1, 2, 3, 4, 5]
+    train = optimizer.minimize(loss)
+    return MU, X, distances, assignments, loss, train
 
-KList = [1,2,3,4,5]
+    
+tf.compat.v1.disable_eager_execution()
+    
+KList = [1, 2, 3, 4, 5]
 
 best_MUs = []
 KTrainLosses = []
@@ -64,7 +64,7 @@ for K in KList:
     print('Running K means clustering on 2D dataset with K = {} ...\n'.format(K))
     
     # build the graph
-    X, MU, distances, loss, assignments, train = buildGraph(2, K)
+    MU, X, distances, assignments, loss, train = buildGraph(K, 2)
     
     init = tf.compat.v1.global_variables_initializer()
     
@@ -73,7 +73,7 @@ for K in KList:
     with tf.compat.v1.Session() as sess:
         
         sess.run(init)
-        for epoch in range(500):
+        for epoch in range(1):
             
             sess.run([train], feed_dict={X: data})
             lossUpdate = sess.run([loss], feed_dict={X: data})
@@ -118,8 +118,7 @@ for K in KList:
     plt.figure()
     plt.scatter(data[:,0], data[:,1], s=1, c=train_assignments)
     plt.scatter(best_MU[:,0], best_MU[:,1], marker='x', s=25, c='black')
-    plt.title('K means clustering on data with K = {}'.format(K))
-    plt.savefig('1_1_2_scatter_with_K={}.png'.format(K))
+    plt.title('K means clustering on training data with K = {}'.format(K))
     plt.show()
     
     plt.figure()
@@ -127,15 +126,14 @@ for K in KList:
     plt.scatter(best_MU[:,0], best_MU[:,1], marker='x', s=25, c='black')
     plt.title('K means clustering on validation data with K = {}'.format(K))
     plt.show()
-'''
+
     plt.figure()
     plt.plot(losses)
     plt.xlabel('Number of updates')
-    plt.ylabel('Loss')
-    plt.title('K means vs. number of updates for K = {}'.format(K))
-    plt.savefig('1_1_1_loss_vs_epoch_with_K={}.png'.format(K))
+    plt.ylabel('Training loss')
+    plt.title('K means Training loss vs. number of updates for K = {}'.format(K))
     plt.show()
-    '''
+    
 plt.figure()
 plt.plot(KList, KValLosses)
 plt.xlabel('K')
@@ -144,7 +142,7 @@ plt.title('K means validation loss vs. K')
 plt.show()
 '''
 
-'''
+
 ### 100d dataset
 
 data = np.load('data100D.npy')
@@ -160,7 +158,7 @@ val_data = data[rnd_idx[:valid_batch]]
 data = data[rnd_idx[valid_batch:]]
 
 
-KList_100D = [5, 10, 15, 20, 30]
+KList_100D = [20, 30]
 
 best_MUs_100D = []
 KTrainLosses_100D = []
@@ -184,7 +182,7 @@ for K in KList_100D:
     with tf.compat.v1.Session() as sess:
         
         sess.run(init)
-        for epoch in range(200):
+        for epoch in range(500):
             
             sess.run([train], feed_dict={X: data})
             lossUpdate = sess.run([loss], feed_dict={X: data})
@@ -233,7 +231,7 @@ for K in KList_100D:
     KTrainPercents_100D.append(train_percentages)
     KValCounts_100D.append(val_counts)
     KValPercents_100D.append(val_percentages)
-    
+    '''
     plt.figure()
     plt.plot(losses)
     plt.xlabel('Number of updates')
@@ -247,5 +245,6 @@ plt.xlabel('K')
 plt.ylabel('Validation loss')
 plt.title('100D K means validation loss vs. K')
 plt.show()
-    '''
+   ''' 
+    
     

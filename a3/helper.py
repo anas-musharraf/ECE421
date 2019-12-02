@@ -14,15 +14,15 @@ def reduce_logsumexp(input_tensor, reduction_indices=1, keep_dims=False):
     The reduced tensor.
   """
   max_input_tensor1 = tf.reduce_max(
-      input_tensor, reduction_indices, keep_dims=keep_dims)
+      input_tensor, reduction_indices, keepdims=keep_dims)
   max_input_tensor2 = max_input_tensor1
   if not keep_dims:
     max_input_tensor2 = tf.expand_dims(max_input_tensor2, reduction_indices)
-  return tf.log(
+  return tf.compat.v1.log(
       tf.reduce_sum(
           tf.exp(input_tensor - max_input_tensor2),
           reduction_indices,
-          keep_dims=keep_dims)) + max_input_tensor1
+          keepdims=keep_dims)) + max_input_tensor1
 
 
 def logsoftmax(input_tensor):
