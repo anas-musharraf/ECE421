@@ -7,16 +7,16 @@ import helper as hlp
 data = np.load('data2D.npy')
 #data = np.load('data100D.npy')
 [num_pts, dim] = np.shape(data)
-'''
+
 # For Validation set
-if is_valid:
-  valid_batch = int(num_pts / 3.0)
-  np.random.seed(45689)
-  rnd_idx = np.arange(num_pts)
-  np.random.shuffle(rnd_idx)
-  val_data = data[rnd_idx[:valid_batch]]
-  data = data[rnd_idx[valid_batch:]]
-'''
+#if is_valid:
+valid_batch = int(num_pts / 3.0)
+np.random.seed(45689)
+rnd_idx = np.arange(num_pts)
+np.random.shuffle(rnd_idx)
+val_data = data[rnd_idx[:valid_batch]]
+data = data[rnd_idx[valid_batch:]]
+
 
 # Distance function for K-means
 def distanceFunc(X, MU):
@@ -64,7 +64,7 @@ for K in KList:
     print('Running K means clustering on 2D dataset with K = {} ...\n'.format(K))
     
     # build the graph
-    MU, X, distances, assignments, loss, train = buildGraph(K, 2)
+    X, MU, distances, loss, assignments, train = buildGraph(2, K)
     
     init = tf.compat.v1.global_variables_initializer()
     
@@ -118,7 +118,8 @@ for K in KList:
     plt.figure()
     plt.scatter(data[:,0], data[:,1], s=1, c=train_assignments)
     plt.scatter(best_MU[:,0], best_MU[:,1], marker='x', s=25, c='black')
-    plt.title('K means clustering on training data with K = {}'.format(K))
+    plt.title('K means clustering on data with K = {}'.format(K))
+    plt.savefig('1_1_1_scatter.png')
     plt.show()
     
     plt.figure()
@@ -130,8 +131,9 @@ for K in KList:
     plt.figure()
     plt.plot(losses)
     plt.xlabel('Number of updates')
-    plt.ylabel('Training loss')
-    plt.title('K means Training loss vs. number of updates for K = {}'.format(K))
+    plt.ylabel('Loss')
+    plt.title('K means vs. number of updates for K = {}'.format(K))
+    plt.savefig('1_1_1_loss_vs_updates.png')
     plt.show()
     
 plt.figure()
@@ -142,7 +144,7 @@ plt.title('K means validation loss vs. K')
 plt.show()
 
 
-
+'''
 ### 100d dataset
 
 data = np.load('data100D.npy')
@@ -245,5 +247,5 @@ plt.xlabel('K')
 plt.ylabel('Validation loss')
 plt.title('100D K means validation loss vs. K')
 plt.show()
-    
+    '''
     
